@@ -5,7 +5,8 @@ use rocket::fs::{FileServer};
 
 #[get("/")]
 fn index() -> Template {
-    Template::render("index", context! { name: "Rocket User" })
+    let alphabet: Vec<char> = ('A'..='Z').collect();
+    Template::render("index", context! { alphabet: alphabet, name: "Rocket User" })
 }
 
 #[launch]

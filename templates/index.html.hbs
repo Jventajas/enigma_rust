@@ -2,11 +2,153 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="/static/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rocket with Handlebars</title>
+    <title>Enigma Machine</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" href="data:,">
+    <script>
+        function handlePlugboardInput(input) {
+            let value = input.value;
+            value = value.replace(/[^a-zA-Z]/g, '').toUpperCase();
+            let formattedValue = '';
+            for (let i = 0; i < value.length; i++) {
+                if (i > 0 && i % 2 === 0) {
+                    formattedValue += ' ';
+                }
+                formattedValue += value[i];
+            }
+            if (value.length > 0 && value.length % 2 === 1 && formattedValue.endsWith(' ')) {
+                formattedValue = formattedValue.slice(0, -1);
+            }
+            input.value = formattedValue;
+        }
+    </script>
 </head>
 <body>
-<h1>Welcome, {{name}}!</h1>
+<div class="container">
+    <h1>Enigma Machine</h1>
+    {{#if error}}
+        <div class="error">Error: {{ error }}</div>
+    {{/if}}
+    <form method="post" action="/">
+        <label for="plaintext">Plaintext:</label>
+        <textarea id="plaintext" name="plaintext" rows="4" cols="50" required>{{ plaintext }}</textarea><br>
+        <div class="columns-container">
+            <div class="left-column">
+                <div class="dropdown-row">
+                    <div class="form-group">
+                        <label for="left_rotor">Rotor I</label>
+                        <select name="left_rotor" id="left_rotor" required>
+                            <option value="I">Rotor I</option>
+                            <option value="II">Rotor II</option>
+                            <option value="III">Rotor III</option>
+                            <option value="IV">Rotor IV</option>
+                            <option value="V">Rotor V</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="left_initial_position">Position</label>
+                        <select name="left_initial_position" id="left_initial_position" required>
+                            {{#each alphabet}}
+                                <option value="{{this}}">{{this}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="left_ring_setting">Ring</label>
+                        <select name="left_ring_setting" id="left_ring_setting" required>
+                            {{#each alphabet}}
+                                <option value="{{this}}">{{this}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                </div>
+                <div class="dropdown-row">
+                    <div class="form-group">
+                        <label for="center_rotor">Rotor II</label>
+                        <select name="center_rotor" id="center_rotor" required>
+                            <option value="I">Rotor I</option>
+                            <option value="II" selected>Rotor II</option>
+                            <option value="III">Rotor III</option>
+                            <option value="IV">Rotor IV</option>
+                            <option value="V">Rotor V</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="center_initial_position">Position</label>
+                        <select name="center_initial_position" id="center_initial_position" required>
+                            {{#each alphabet}}
+                                <option value="{{this}}">{{this}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="center_ring_setting">Ring</label>
+                        <select name="center_ring_setting" id="center_ring_setting" required>
+                            {{#each alphabet}}
+                                <option value="{{this}}">{{this}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                </div>
+                <div class="dropdown-row">
+                    <div class="form-group">
+                        <label for="right_rotor">Rotor III</label>
+                        <select name="right_rotor" id="right_rotor" required>
+                            <option value="I">Rotor I</option>
+                            <option value="II">Rotor II</option>
+                            <option value="III" selected>Rotor III</option>
+                            <option value="IV">Rotor IV</option>
+                            <option value="V">Rotor V</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="right_initial_position">Position</label>
+                        <select name="right_initial_position" id="right_initial_position" required>
+                            {{#each alphabet}}
+                                <option value="{{this}}">{{this}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="right_ring_setting">Ring</label>
+                        <select name="right_ring_setting" id="right_ring_setting" required>
+                            {{#each alphabet}}
+                                <option value="{{this}}">{{this}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="right-column">
+                <div class="form-group">
+                    <label for="reflector">Reflector</label>
+                    <select name="reflector" id="reflector" required>
+                        <option value="A">Reflector A</option>
+                        <option value="B">Reflector B</option>
+                        <option value="C">Reflector C</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="plugboard">Plugboard</label>
+                    <input type="text" id="plugboard" name="plugboard"
+                           value="AB CD EF"
+                           oninput="handlePlugboardInput(this)"
+                           placeholder="Enter plugboard settings">
+                </div>
+            </div>
+        </div>
+        <button type="submit">Encrypt</button>
+        <div class="output">
+            <label for="ciphertext">Encrypted Text:</label>
+            <textarea
+                    id="ciphertext"
+                    name="ciphertext"
+                    rows="4"
+                    readonly>{{ ciphertext }}
+            </textarea>
+        </div>
+    </form>
+</div>
 </body>
 </html>
