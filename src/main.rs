@@ -3,10 +3,12 @@
 use rocket_dyn_templates::{Template, context};
 use rocket::fs::{FileServer};
 use rocket::form::Form;
+use rocket::futures::stream::Collect;
 
 #[derive(FromForm)]
 struct Message {
     plaintext: String,
+    ciphertext: String,
     left_rotor: String,
     left_initial_position: char,
     left_ring_setting: char,
@@ -21,11 +23,10 @@ struct Message {
 }
 
 
-
 #[get("/")]
 fn index() -> Template {
     let alphabet: Vec<char> = ('A'..='Z').collect();
-    Template::render("index", context! { alphabet: alphabet, name: "Rocket User" })
+    Template::render("index", context! { alphabet: alphabet })
 }
 
 #[post("/", data = "<message>")]
@@ -33,9 +34,19 @@ fn encrypt(message: Form<Message>) -> Template {
     let alphabet: Vec<char> = ('A'..='Z').collect();
     Template::render("index", context! {
         alphabet: alphabet,
-        name: "Rocket User",
-        ciphertext: message.plaintext.clone(),
         plaintext: message.plaintext.clone(),
+        ciphertext: message.plaintext.clone(),  // Replace with actual encryption logic
+        left_rotor: message.left_rotor.clone(),
+        left_initial_position: message.left_initial_position,
+        left_ring_setting: message.left_ring_setting,
+        center_rotor: message.center_rotor.clone(),
+        center_initial_position: message.center_initial_position,
+        center_ring_setting: message.center_ring_setting,
+        right_rotor: message.right_rotor.clone(),
+        right_initial_position: message.right_initial_position,
+        right_ring_setting: message.right_ring_setting,
+        reflector: message.reflector.clone(),
+        plugboard: message.plugboard.clone(),
     })
 }
 

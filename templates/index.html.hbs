@@ -39,18 +39,18 @@
                     <div class="form-group">
                         <label for="left_rotor">Rotor I</label>
                         <select name="left_rotor" id="left_rotor" required>
-                            <option value="I">Rotor I</option>
-                            <option value="II">Rotor II</option>
-                            <option value="III">Rotor III</option>
-                            <option value="IV">Rotor IV</option>
-                            <option value="V">Rotor V</option>
+                            <option value="I" {{#if (eq left_rotor "I")}}selected{{/if}}>Rotor I</option>
+                            <option value="II" {{#if (eq left_rotor "II")}}selected{{/if}}>Rotor II</option>
+                            <option value="III" {{#if (eq left_rotor "III")}}selected{{/if}}>Rotor III</option>
+                            <option value="IV" {{#if (eq left_rotor "IV")}}selected{{/if}}>Rotor IV</option>
+                            <option value="V" {{#if (eq left_rotor "V")}}selected{{/if}}>Rotor V</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="left_initial_position">Position</label>
                         <select name="left_initial_position" id="left_initial_position" required>
                             {{#each alphabet}}
-                                <option value="{{this}}">{{this}}</option>
+                                <option value="{{this}}" {{#if (eq this ../left_initial_position)}}selected{{/if}}>{{this}}</option>
                             {{/each}}
                         </select>
                     </div>
@@ -58,7 +58,7 @@
                         <label for="left_ring_setting">Ring</label>
                         <select name="left_ring_setting" id="left_ring_setting" required>
                             {{#each alphabet}}
-                                <option value="{{this}}">{{this}}</option>
+                                <option value="{{this}}" {{#if (eq this ../left_ring_setting)}}selected{{/if}}>{{this}}</option>
                             {{/each}}
                         </select>
                     </div>
@@ -67,18 +67,18 @@
                     <div class="form-group">
                         <label for="center_rotor">Rotor II</label>
                         <select name="center_rotor" id="center_rotor" required>
-                            <option value="I">Rotor I</option>
-                            <option value="II" selected>Rotor II</option>
-                            <option value="III">Rotor III</option>
-                            <option value="IV">Rotor IV</option>
-                            <option value="V">Rotor V</option>
+                            <option value="I" {{#if (eq center_rotor "I")}}selected{{/if}}>Rotor I</option>
+                            <option value="II" {{#if (eq center_rotor "II")}}selected{{/if}}>Rotor II</option>
+                            <option value="III" {{#if (eq center_rotor "III")}}selected{{/if}}>Rotor III</option>
+                            <option value="IV" {{#if (eq center_rotor "IV")}}selected{{/if}}>Rotor IV</option>
+                            <option value="V" {{#if (eq center_rotor "V")}}selected{{/if}}>Rotor V</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="center_initial_position">Position</label>
                         <select name="center_initial_position" id="center_initial_position" required>
                             {{#each alphabet}}
-                                <option value="{{this}}">{{this}}</option>
+                                <option value="{{this}}" {{#if (eq this ../center_initial_position)}}selected{{/if}}>{{this}}</option>
                             {{/each}}
                         </select>
                     </div>
@@ -86,27 +86,27 @@
                         <label for="center_ring_setting">Ring</label>
                         <select name="center_ring_setting" id="center_ring_setting" required>
                             {{#each alphabet}}
-                                <option value="{{this}}">{{this}}</option>
+                                <option value="{{this}}" {{#if (eq this ../center_ring_setting)}}selected{{/if}}>{{this}}</option>
                             {{/each}}
                         </select>
                     </div>
                 </div>
                 <div class="dropdown-row">
                     <div class="form-group">
-                        <label for="right_rotor">Rotor III</label>
+                        <label for="center_rotor">Rotor III</label>
                         <select name="right_rotor" id="right_rotor" required>
-                            <option value="I">Rotor I</option>
-                            <option value="II">Rotor II</option>
-                            <option value="III" selected>Rotor III</option>
-                            <option value="IV">Rotor IV</option>
-                            <option value="V">Rotor V</option>
+                            <option value="I" {{#if (eq right_rotor "I")}}selected{{/if}}>Rotor I</option>
+                            <option value="II" {{#if (eq right_rotor "II")}}selected{{/if}}>Rotor II</option>
+                            <option value="III" {{#if (eq right_rotor "III")}}selected{{/if}}>Rotor III</option>
+                            <option value="IV" {{#if (eq right_rotor "IV")}}selected{{/if}}>Rotor IV</option>
+                            <option value="V" {{#if (eq right_rotor "V")}}selected{{/if}}>Rotor V</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="right_initial_position">Position</label>
                         <select name="right_initial_position" id="right_initial_position" required>
                             {{#each alphabet}}
-                                <option value="{{this}}">{{this}}</option>
+                                <option value="{{this}}" {{#if (eq this ../right_initial_position)}}selected{{/if}}>{{this}}</option>
                             {{/each}}
                         </select>
                     </div>
@@ -114,7 +114,7 @@
                         <label for="right_ring_setting">Ring</label>
                         <select name="right_ring_setting" id="right_ring_setting" required>
                             {{#each alphabet}}
-                                <option value="{{this}}">{{this}}</option>
+                                <option value="{{this}}" {{#if (eq this ../right_ring_setting)}}selected{{/if}}>{{this}}</option>
                             {{/each}}
                         </select>
                     </div>
@@ -124,15 +124,15 @@
                 <div class="form-group">
                     <label for="reflector">Reflector</label>
                     <select name="reflector" id="reflector" required>
-                        <option value="A">Reflector A</option>
-                        <option value="B">Reflector B</option>
-                        <option value="C">Reflector C</option>
+                        <option value="A" {{#if (eq reflector "A")}}selected{{/if}}>Reflector A</option>
+                        <option value="B" {{#if (eq reflector "B")}}selected{{/if}}>Reflector B</option>
+                        <option value="C" {{#if (eq reflector "C")}}selected{{/if}}>Reflector C</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="plugboard">Plugboard</label>
                     <input type="text" id="plugboard" name="plugboard"
-                           value="AB CD EF"
+                           value="{{ plugboard }}"
                            oninput="handlePlugboardInput(this)"
                            placeholder="Enter plugboard settings">
                 </div>
@@ -141,12 +141,7 @@
         <button type="submit">Encrypt</button>
         <div class="output">
             <label for="ciphertext">Encrypted Text:</label>
-            <textarea
-                    id="ciphertext"
-                    name="ciphertext"
-                    rows="4"
-                    readonly>{{ ciphertext }}
-            </textarea>
+            <textarea id="ciphertext" name="ciphertext" rows="4" readonly>{{ ciphertext }}</textarea>
         </div>
     </form>
 </div>
