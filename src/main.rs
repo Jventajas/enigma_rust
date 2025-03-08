@@ -26,11 +26,16 @@ struct Message {
 #[get("/")]
 fn index() -> Template {
     let alphabet: Vec<char> = ('A'..='Z').collect();
-    Template::render("index", context! { alphabet: alphabet })
+    Template::render("index", context! {
+        alphabet: alphabet,
+        plugboard: "AB CD EF",
+    })
 }
 
 #[post("/", data = "<message>")]
 fn encrypt(message: Form<Message>) -> Template {
+
+
     let alphabet: Vec<char> = ('A'..='Z').collect();
     Template::render("index", context! {
         alphabet: alphabet,
