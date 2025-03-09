@@ -1,4 +1,5 @@
 #[macro_use] extern crate rocket;
+mod enigma;
 
 use std::collections::HashSet;
 
@@ -6,6 +7,11 @@ use rocket_dyn_templates::{Template, context};
 use rocket::fs::{FileServer};
 use rocket::form::Form;
 use rocket::futures::stream::Collect;
+
+use enigma::enigma_machine::EnigmaMachine;
+use enigma::rotor::Rotor;
+use enigma::reflector::Reflector;
+use enigma::plugboard::Plugboard;
 
 #[derive(FromForm)]
 struct Message {
@@ -41,49 +47,58 @@ fn index() -> Template {
 #[post("/", data = "<message>")]
 fn encrypt(message: Form<Message>) -> Template {
     let alphabet: Vec<char> = ('A'..='Z').collect();
-    let plugboard = message.plugboard.clone();
+    let plugboard_str = message.plugboard.clone();
 
-    // Function to validate plugboard settings
-    fn is_plugboard_valid(plugboard: &str) -> Result<(), String> {
-        let mut used_letters = HashSet::new();
-        let pairs: Vec<&str> = plugboard.split_whitespace().collect();
+    match parse_plugboard_string(&plugboard_str) {
+        Ok(pairs) => {
+            let left_rotor = Rotor::new(
+                &message.left_rotor,
+                message.left_initial_position,
+                message.left_ring_setting,
+            );
+            let center_rotor = Rotor::new(
+                &message.center_rotor,
+                message.center_initial_position,
+                message.center_ring_setting,
+            );
+            let right_rotor = Rotor::new(
+                &message.right_rotor,
+                message.right_initial_position,
+                message.right_ring_setting,
+            );
 
-        for pair in pairs {
-            let chars: Vec<char> = pair.chars().collect();
-            if chars.len() != 2 {
-                return Err(format!("Invalid pair: '{}'", pair));
-            }
-            for &ch in &chars {
-                if !ch.is_ascii_uppercase() || used_letters.contains(&ch) {
-                    return Err(format!("Invalid or duplicate letter: '{}'", ch));
-                }
-                used_letters.insert(ch);
-            }
-        }
-        Ok(())
-    }
+            let reflector = Reflector::new(&message.reflector);
+            let plugboard = Plugboard::new(pairs);
 
-    // Validate the plugboard
-    let validation_result = is_plugboard_valid(&plugboard);
+            // Initialize the Enigma machine
+            let mut enigma = EnigmaMachine::new(
+                vec![left_rotor, center_rotor, right_rotor],
+                reflector,
+                plugboard,
+            );
 
-    match validation_result {
-        Ok(_) => Template::render("index", context! {
-            alphabet: alphabet,
-            plaintext: message.plaintext.clone(),
-            ciphertext: message.plaintext.clone(),  // Use the plaintext as a placeholder
-            left_rotor: message.left_rotor.clone(),
-            left_initial_position: message.left_initial_position,
-            left_ring_setting: message.left_ring_setting,
-            center_rotor: message.center_rotor.clone(),
-            center_initial_position: message.center_initial_position,
-            center_ring_setting: message.center_ring_setting,
-            right_rotor: message.right_rotor.clone(),
-            right_initial_position: message.right_initial_position,
-            right_ring_setting: message.right_ring_setting,
-            reflector: message.reflector.clone(),
-            plugboard: message.plugboard.clone(),
-        }),
-        Err(error_message) => Template::render("index", context! {
+            // Encrypt the plaintext
+            let ciphertext = enigma.process(&message.plaintext.to_uppercase());
+
+            // Render the template with ciphertext
+            Template::render("index", context! {
+                alphabet: alphabet,
+                plaintext: message.plaintext.clone(),
+                ciphertext: ciphertext,  // Use the encrypted text
+                left_rotor: message.left_rotor.clone(),
+                left_initial_position: message.left_initial_position,
+                left_ring_setting: message.left_ring_setting,
+                center_rotor: message.center_rotor.clone(),
+                center_initial_position: message.center_initial_position,
+                center_ring_setting: message.center_ring_setting,
+                right_rotor: message.right_rotor.clone(),
+                right_initial_position: message.right_initial_position,
+                right_ring_setting: message.right_ring_setting,
+                reflector: message.reflector.clone(),
+                plugboard: message.plugboard.clone(),
+            })
+        },
+        Err(e) => Template::render("index", context! {
             alphabet: alphabet,
             plaintext: message.plaintext.clone(),
             ciphertext: "",  // No ciphertext on error
@@ -98,10 +113,42 @@ fn encrypt(message: Form<Message>) -> Template {
             right_ring_setting: message.right_ring_setting,
             reflector: message.reflector.clone(),
             plugboard: message.plugboard.clone(),
-            error: error_message,  // Pass the error to the template
+            error: e,  // Pass the error to the template
         }),
     }
 }
+
+fn parse_plugboard_string(plugboard: &str) -> Result<Vec<(char, char)>, String> {
+    let mut connections = Vec::new();
+    let pairs: Vec<&str> = plugboard.split_whitespace().collect();
+
+    for pair in pairs {
+        if pair.len() != 2 {
+            return Err(format!("Invalid plugboard pair: {}", pair));
+        }
+        let chars: Vec<char> = pair.chars().collect();
+        let a = chars[0];
+        let b = chars[1];
+
+        // Ensure both characters are uppercase alphabet letters
+        if !a.is_ascii_alphabetic() || !b.is_ascii_alphabetic() || !a.is_uppercase() || !b.is_uppercase() {
+            return Err(format!("Invalid characters in plugboard pair: {}", pair));
+        }
+
+        // Ensure no duplicate connections
+        if connections.iter().any(|(x, y)| *x == a || *y == a || *x == b || *y == b) {
+            return Err(format!(
+                "Plugboard contains duplicate or conflicting connection: {}",
+                pair
+            ));
+        }
+
+        connections.push((a, b));
+    }
+    Ok(connections)
+}
+
+
 
 #[launch]
 fn rocket() -> _ {

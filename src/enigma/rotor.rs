@@ -1,5 +1,17 @@
 use crate::enigma::utils::ALPHABET;
 
+use std::collections::HashMap;
+
+pub fn rotor_configs() -> HashMap<&'static str, (&'static str, char)> {
+    let mut configs = HashMap::new();
+    configs.insert("I", ("EKMFLGDQVZNTOWYHXUSPAIBRCJ", 'Q'));
+    configs.insert("II", ("AJDKSIRUXBLHWTMCQGZNPYFVOE", 'E'));
+    configs.insert("III", ("BDFHJLCPRTXVZNYEIWGAKMUSQO", 'V'));
+    configs.insert("IV", ("ESOVPZJAYQUIRHXLNFTGKDCMWB", 'J'));
+    configs.insert("V", ("VZBRGITYUPSDNHLXAWMJQOFECK", 'Z'));
+    configs
+}
+
 pub struct Rotor {
     wiring: String,
     notch: char,
@@ -8,16 +20,28 @@ pub struct Rotor {
 }
 
 impl Rotor {
-    pub fn new(wiring: &str, notch: char, initial_position: char, ring_setting: char) -> Self {
-        let position = ALPHABET.find(initial_position).expect("Invalid rotor position.");
-        let ring = ALPHABET.find(ring_setting).expect("Invalid ring setting.");
+    pub fn new(rotor_number: &str, initial_position: char, ring_setting: char) -> Self {
+        // Get the rotor configuration (wiring and notch) for the given rotor number
+        let configs = rotor_configs();
+        let (wiring, notch) = configs
+            .get(rotor_number)
+            .expect("Invalid rotor number. Please use 'I', 'II', 'III', 'IV', or 'V'.");
+
+        // Convert initial position and ring setting to numeric indices
+        let position = ALPHABET.find(initial_position)
+            .expect("Invalid initial position. Must be an uppercase letter A-Z.");
+        let ring = ALPHABET.find(ring_setting)
+            .expect("Invalid ring setting. Must be an uppercase letter A-Z.");
+
+        // Create and return the Rotor instance
         Self {
             wiring: wiring.to_string(),
-            notch,
+            notch: *notch,
             position,
             ring,
         }
     }
+
 
     pub fn rotate(&mut self) {
         self.position = (self.position + 1) % 26;
