@@ -29,6 +29,10 @@ fn index() -> Template {
     Template::render("index", context! {
         alphabet: alphabet,
         plugboard: "AB CD EF",
+        left_rotor: "I",
+        center_rotor: "II",
+        right_rotor: "III",
+
     })
 }
 
